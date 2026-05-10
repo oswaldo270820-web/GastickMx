@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inicio de sesión</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/estilos.css/login.css">
+</head>
+
+<body>
+
+    <!-- BOTÓN REGRESAR -->
+    <div class="contenedor-regresar">
+        <a href="index.html" class="btn-principal">← Regresar</a>
+    </div>
+
+    <div class="login-contenedor">
+
+        <!-- LADO IMAGEN -->
+        <div class="login-imagen">
+            <div class="overlay">
+                <h1>Gestor Financiero Personal</h1>
+                <p>Organiza tu dinero de forma clara y segura</p>
+            </div>
+        </div>
+
+        <!-- CAJA LOGIN -->
+        <div class="login-caja">
+
+            <h2>Iniciar sesión</h2>
+            <p class="subtexto">Accede a tu cuenta para continuar</p>
+
+            <form id="loginForm">
+                <label>Usuario</label>
+                <input type="text" id="usuario" placeholder="Ingresa tu usuario">
+
+                <label>Contraseña</label>
+                <input type="password" id="password" placeholder="Ingresa tu contraseña">
+
+                <button type="submit" id="btnEntrar">Entrar</button>
+
+                <p id="mensaje" class="mensaje"></p>
+            </form>
+
+            <p class="extra">
+                ¿No tienes cuenta?
+                <a href="registro.html" id="linkREGISTRO">Regístrate</a>
+            </p>
+
+        </div>
+
+    </div>
+
+    <script src="../assets/scrip.js/login.js"></script>
+</body>
+</html>

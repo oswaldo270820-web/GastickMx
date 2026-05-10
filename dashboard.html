@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestor Financiero</title>
+    <link rel="stylesheet" href="../assets/estilos.css/dashboard.css">
+</head>
+
+<body>
+
+<header>
+    <div class="header-contenido">
+        <h1>Gestor Financiero</h1>
+        <div class="usuario">
+            <a href="index.html" class="btn-cerrar">Cerrar sesión</a>
+        </div>
+    </div>
+</header>
+
+<nav>
+    <a href="#" onclick="mostrarSeccion('inicio')">Inicio</a>
+    <a href="#" onclick="mostrarSeccion('movimientos')">Movimientos</a>
+    <a href="#" onclick="mostrarSeccion('metas')">Metas</a>
+</nav>
+
+<main>
+
+<section id="inicio">
+    <h2>Resumen</h2>
+
+    <div class="tarjetas">
+        <div class="card">
+            <h3>Saldo Actual</h3>
+            <p id="saldo">$0</p>
+        </div>
+
+        <div class="card">
+            <h3>Total Ingresos</h3>
+            <p id="totalIngresos">$0</p>
+        </div>
+
+        <div class="card">
+            <h3>Total Gastos</h3>
+            <p id="totalGastos">$0</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <h2>Registrar Ingreso</h2>
+    <form id="formIngreso">
+        <input type="date" id="fechaIngreso" required>
+        <input type="number" id="montoIngreso" required>
+        <input type="text" id="conceptoIngreso" required>
+        <button type="submit">Guardar Ingreso</button>
+    </form>
+
+    <h2>Registrar Gasto</h2>
+    <form id="formGasto">
+        <input type="date" id="fechaGasto" required>
+        <input type="number" id="montoGasto" required>
+        <input type="text" id="conceptoGasto" required>
+        <button type="submit">Guardar Gasto</button>
+    </form>
+</section>
+
+<section id="movimientos" style="display:none;">
+    <h2>Lista de Movimientos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Descripción</th>
+                <th>Monto</th>
+                <th>Tipo</th>
+            </tr>
+        </thead>
+        <tbody id="tablaMovimientos"></tbody>
+    </table>
+</section>
+
+<section id="metas" style="display:none;">
+    <h2>Registrar Meta</h2>
+    <form id="formMeta">
+        <input type="text" id="nombreMeta" required>
+        <input type="number" id="montoMeta" required>
+        <button type="submit">Guardar Meta</button>
+    </form>
+
+    <div id="listaMetas"></div>
+</section>
+
+</main>
+
+<footer>
+    <p>Proyecto TI - Gestor Financiero Personal</p>
+</footer>
+
+<script src="../assets/scrip.js/dashboard.js"></script>
+</body>
+</html>
