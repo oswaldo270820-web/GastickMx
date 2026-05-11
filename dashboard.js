@@ -4,7 +4,7 @@ let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
 let usuario = usuarios.find(u => u.usuario === usuarioActivo);
 
 if (!usuario) {
-    window.location.href = "INICIOSE.html";
+    window.location.href = "login.html";
 }
 
 let ingresos = usuario.ingresos;
