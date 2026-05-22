@@ -102,5 +102,24 @@ document.addEventListener("DOMContentLoaded", function () {
         recuadroSoporte.classList.remove("oculto");
 
     });
+    
+    let ultimoScroll = 0;
+const barraNav = document.querySelector('.nav');
+const umbralSubida = 15; 
+
+window.addEventListener('scroll', () => {
+    const scrollActual = window.pageYOffset || document.documentElement.scrollTop;
+
+
+    if (scrollActual > ultimoScroll && scrollActual > 100) {
+        barraNav.classList.add('nav-oculto');
+    } 
+    
+    else if (ultimoScroll - scrollActual > umbralSubida) {
+        barraNav.classList.remove('nav-oculto');
+    }
+    
+    ultimoScroll = scrollActual <= 0 ? 0 : scrollActual; 
+});
 
 });
