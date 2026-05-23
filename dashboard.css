@@ -658,3 +658,46 @@ label{
     }
 
 }
+/* ================================= */
+/* FIX BOOTSTRAP */
+/* ================================= */
+
+body{
+
+    background:#f4f7fb !important;
+
+}
+
+.main-content{
+
+    background:#f4f7fb !important;
+
+}
+
+.custom-card{
+
+    background:white !important;
+
+}
+
+.resumen-card{
+
+    color:white !important;
+
+}
+
+.table{
+
+    background:white !important;
+
+}
+
+.sidebar{
+
+    min-height:100vh;
+
+    position:sticky;
+
+    top:0;
+
+}
