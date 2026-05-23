@@ -99,24 +99,73 @@ document.addEventListener("DOMContentLoaded", function () {
 
     });
 
+    /* =========================
+       CONTACTO NAVBAR
+    ========================== */
+
+    const abrirContacto =
+        document.getElementById("abrir-contacto");
+
+    const cerrarContacto =
+        document.getElementById("cerrar-contacto");
+
+    const recuadroContacto =
+        document.getElementById("recuadro-contacto");
+
+    abrirContacto.addEventListener("click", function (e) {
+
+        e.preventDefault();
+
+        recuadroContacto.classList.toggle("oculto");
+
+    });
+
+    cerrarContacto.addEventListener("click", function () {
+
+        recuadroContacto.classList.add("oculto");
+
+    });
+
+    document.addEventListener("click", function (e) {
+
+        if (
+            !recuadroContacto.classList.contains("oculto") &&
+            !recuadroContacto.contains(e.target) &&
+            e.target !== abrirContacto
+        ) {
+
+            recuadroContacto.classList.add("oculto");
+
+        }
+
+    });
+
+    /* =========================
+       NAVBAR SCROLL
+    ========================== */
+
     let ultimoScroll = 0;
-const barraNav = document.querySelector('.nav');
-const umbralSubida = 15; 
+    const barraNav = document.querySelector('.nav');
+    const umbralSubida = 15;
 
-window.addEventListener('scroll', () => {
-    const scrollActual = window.pageYOffset || document.documentElement.scrollTop;
+    window.addEventListener('scroll', () => {
 
+        const scrollActual =
+            window.pageYOffset ||
+            document.documentElement.scrollTop;
 
-    if (scrollActual > ultimoScroll && scrollActual > 100) {
-        barraNav.classList.add('nav-oculto');
-    } 
-    
-    else if (ultimoScroll - scrollActual > umbralSubida) {
-        barraNav.classList.remove('nav-oculto');
-    }
-    
-    ultimoScroll = scrollActual <= 0 ? 0 : scrollActual; 
-});
+        if (scrollActual > ultimoScroll && scrollActual > 100) {
 
+            barraNav.classList.add('nav-oculto');
+
+        } else if (ultimoScroll - scrollActual > umbralSubida) {
+
+            barraNav.classList.remove('nav-oculto');
+
+        }
+
+        ultimoScroll = scrollActual <= 0 ? 0 : scrollActual;
+
+    });
 
 });

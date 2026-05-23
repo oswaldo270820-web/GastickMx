@@ -28,11 +28,9 @@ body {
     gap: 35px;
 
     padding: 20px;
-    
-  
+
     transition: transform 0.4s ease;
 }
-
 
 .nav-oculto {
     transform: translateY(-100%);
@@ -74,8 +72,7 @@ body {
 
     text-align: center;
     padding: 40px;
-    
-   
+
     padding-top: 100px;
 }
 
@@ -204,13 +201,13 @@ body {
     width: 100%;
     border-radius: 20px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-    
+
     animation: entrarImagenDerecha linear both;
     animation-timeline: view();
     animation-range: entry 0% contain 20%;
 }
 
-/* --- ANIMACIONES DE ENTRADA SIMÉTRICAS --- */
+/* ANIMACIONES DE ENTRADA */
 
 @keyframes entrarTextoIzquierda {
     0% {
@@ -336,7 +333,7 @@ body {
     padding-left: 20px;
 }
 
-/* SOPORTE */
+/* SOPORTE Y CONTACTO */
 
 .recuadro-soporte {
     position: fixed;
@@ -349,6 +346,12 @@ body {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     z-index: 4000;
     animation: aparecerSoporte 0.3s ease;
+}
+
+#recuadro-contacto {
+    bottom: auto;
+    top: 75px;
+    right: 25px;
 }
 
 .soporte-header {
@@ -398,7 +401,7 @@ body {
     }
 }
 
-/* BOTON SOPORTE FOTANTE */
+/* BOTON SOPORTE FLOTANTE */
 
 .boton-soporte {
     position: fixed;
@@ -422,7 +425,7 @@ body {
     transform: translateY(-2px);
 }
 
-/* RESPONSIVE GENERAL */
+/* RESPONSIVE */
 
 @media(max-width: 992px) {
     .bloque {
