@@ -99,22 +99,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     });
 
-    /* =========================
-       CONTACTO NAVBAR
-    ========================== */
+const abrirContacto =
+    document.getElementById("abrir-contacto");
 
-    const abrirContacto =
-        document.getElementById("abrir-contacto");
+const cerrarContacto =
+    document.getElementById("cerrar-contacto");
 
-    const cerrarContacto =
-        document.getElementById("cerrar-contacto");
+const recuadroContacto =
+    document.getElementById("recuadro-contacto");
 
-    const recuadroContacto =
-        document.getElementById("recuadro-contacto");
+if (abrirContacto && recuadroContacto) {
 
     abrirContacto.addEventListener("click", function (e) {
 
         e.preventDefault();
+        e.stopPropagation();
 
         recuadroContacto.classList.toggle("oculto");
 
@@ -140,6 +139,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     });
 
+}
     /* =========================
        NAVBAR SCROLL
     ========================== */
