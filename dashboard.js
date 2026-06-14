@@ -1,24 +1,96 @@
-/* FECHA */
+/* ==========================
+   FECHA
+========================== */
 
-const fecha =
-new Date();
+const fecha = new Date();
 
-document
-.getElementById("fechaActual")
-.textContent =
+document.getElementById("fechaActual").textContent =
 fecha.toLocaleDateString("es-MX");
 
-/* VARIABLES */
+/* ==========================
+   USUARIO ACTIVO
+========================== */
+
+const usuarioActivo =
+localStorage.getItem("usuarioActivo") || "Usuario";
+
+const saludoUsuario =
+document.getElementById("saludoUsuario");
+
+if (saludoUsuario) {
+    saludoUsuario.textContent =
+    `Hola ${usuarioActivo} 👋`;
+}
+
+/* ==========================
+   VARIABLES
+========================== */
 
 let ingresos = [];
-
 let gastos = [];
-
 let movimientos = [];
-
 let metas = [];
 
-/* ELEMENTOS */
+/* ==========================
+   LOCAL STORAGE
+========================== */
+
+function guardarDatos() {
+
+    localStorage.setItem(
+        "ingresos",
+        JSON.stringify(ingresos)
+    );
+
+    localStorage.setItem(
+        "gastos",
+        JSON.stringify(gastos)
+    );
+
+    localStorage.setItem(
+        "movimientos",
+        JSON.stringify(movimientos)
+    );
+
+    localStorage.setItem(
+        "metas",
+        JSON.stringify(metas)
+    );
+
+}
+
+function cargarDatos() {
+
+    ingresos =
+        JSON.parse(
+            localStorage.getItem("ingresos")
+        ) || [];
+
+    gastos =
+        JSON.parse(
+            localStorage.getItem("gastos")
+        ) || [];
+
+    movimientos =
+        JSON.parse(
+            localStorage.getItem("movimientos")
+        ) || [];
+
+    metas =
+        JSON.parse(
+            localStorage.getItem("metas")
+        ) || [];
+
+    actualizarResumen();
+    renderizarMovimientos();
+    renderizarMetas();
+    renderizarUltimosMovimientos();
+
+}
+
+/* ==========================
+   ELEMENTOS
+========================== */
 
 const tabla =
 document.getElementById("tablaMovimientos");
@@ -38,7 +110,9 @@ document.getElementById("gastos");
 const contenedorMetas =
 document.getElementById("contenedorMetas");
 
-/* INGRESOS */
+/* ==========================
+   INGRESOS
+========================== */
 
 document
 .getElementById("formIngreso")
@@ -57,7 +131,6 @@ document
     if(!concepto || isNaN(monto)){
 
         alert("Completa los campos");
-
         return;
 
     }
@@ -73,13 +146,17 @@ document
         "Ingreso"
     );
 
+    guardarDatos();
+
     actualizarResumen();
 
     this.reset();
 
 });
 
-/* GASTOS */
+/* ==========================
+   GASTOS
+========================== */
 
 document
 .getElementById("formGasto")
@@ -98,7 +175,6 @@ document
     if(!concepto || isNaN(monto)){
 
         alert("Completa los campos");
-
         return;
 
     }
@@ -114,13 +190,17 @@ document
         "Gasto"
     );
 
+    guardarDatos();
+
     actualizarResumen();
 
     this.reset();
 
 });
 
-/* MOVIMIENTOS */
+/* ==========================
+   AGREGAR MOVIMIENTO
+========================== */
 
 function agregarMovimiento(
     concepto,
@@ -142,46 +222,73 @@ function agregarMovimiento(
 
     });
 
+    guardarDatos();
+
     renderizarMovimientos();
 
-    const fila =
-    document.createElement("tr");
-
-    fila.innerHTML = `
-
-        <td>${concepto}</td>
-
-        <td>$${monto.toFixed(2)}</td>
-
-        <td>
-
-            <span class="
-                badge
-                ${tipo === "Ingreso"
-                    ? "bg-success"
-                    : "bg-danger"}
-            ">
-
-                ${tipo}
-
-            </span>
-
-        </td>
-
-    `;
-
-    tabla.prepend(fila);
+    renderizarUltimosMovimientos();
 
 }
 
-/* TABLA COMPLETA */
+/* ==========================
+   ULTIMOS MOVIMIENTOS
+========================== */
+
+function renderizarUltimosMovimientos(){
+
+    if(!tabla) return;
+
+    tabla.innerHTML = "";
+
+    const ultimos =
+    [...movimientos]
+    .reverse()
+    .slice(0,10);
+
+    ultimos.forEach(mov => {
+
+        tabla.innerHTML += `
+
+        <tr>
+
+            <td>${mov.concepto}</td>
+
+            <td>$${mov.monto.toFixed(2)}</td>
+
+            <td>
+
+                <span class="badge ${
+                    mov.tipo === "Ingreso"
+                    ? "bg-success"
+                    : "bg-danger"
+                }">
+
+                    ${mov.tipo}
+
+                </span>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+}
+
+/* ==========================
+   TABLA COMPLETA
+========================== */
 
 function renderizarMovimientos(){
+
+    if(!tablaCompleta) return;
 
     tablaCompleta.innerHTML = "";
 
     let filtro =
-    document.getElementById("filtroFecha").value;
+    document.getElementById("filtroFecha")?.value;
 
     let movimientosFiltrados =
     movimientos;
@@ -199,34 +306,29 @@ function renderizarMovimientos(){
 
         tablaCompleta.innerHTML += `
 
-            <tr>
+        <tr>
 
-                <td>${mov.fecha}</td>
+            <td>${mov.fecha}</td>
 
-                <td>${mov.concepto}</td>
+            <td>${mov.concepto}</td>
 
-                <td>
+            <td>$${mov.monto.toFixed(2)}</td>
 
-                    $${mov.monto.toFixed(2)}
+            <td>
 
-                </td>
+                <span class="badge ${
+                    mov.tipo === "Ingreso"
+                    ? "bg-success"
+                    : "bg-danger"
+                }">
 
-                <td>
+                    ${mov.tipo}
 
-                    <span class="
-                        badge
-                        ${mov.tipo === "Ingreso"
-                            ? "bg-success"
-                            : "bg-danger"}
-                    ">
+                </span>
 
-                        ${mov.tipo}
+            </td>
 
-                    </span>
-
-                </td>
-
-            </tr>
+        </tr>
 
         `;
 
@@ -236,12 +338,14 @@ function renderizarMovimientos(){
 
 document
 .getElementById("filtroFecha")
-.addEventListener(
+?.addEventListener(
     "change",
     renderizarMovimientos
 );
 
-/* RESUMEN */
+/* ==========================
+   RESUMEN
+========================== */
 
 function actualizarResumen(){
 
@@ -272,7 +376,9 @@ function actualizarResumen(){
 
 }
 
-/* METAS */
+/* ==========================
+   METAS
+========================== */
 
 document
 .getElementById("formMeta")
@@ -291,7 +397,6 @@ document
     if(!nombre || isNaN(monto)){
 
         alert("Completa los campos");
-
         return;
 
     }
@@ -303,15 +408,21 @@ document
 
     });
 
+    guardarDatos();
+
     renderizarMetas();
 
     this.reset();
 
 });
 
-/* RENDER */
+/* ==========================
+   RENDER METAS
+========================== */
 
 function renderizarMetas(){
+
+    if(!contenedorMetas) return;
 
     contenedorMetas.innerHTML = "";
 
@@ -319,34 +430,28 @@ function renderizarMetas(){
 
         contenedorMetas.innerHTML += `
 
-            <div class="col-lg-4">
+        <div class="col-lg-4">
 
-                <div class="meta-card">
+            <div class="meta-card">
 
-                    <h5>
+                <h5>${meta.nombre}</h5>
 
-                        ${meta.nombre}
+                <p>
+                    Objetivo:
+                    $${meta.monto.toFixed(2)}
+                </p>
 
-                    </h5>
+                <button
+                    class="btn btn-danger btn-sm"
+                    onclick="eliminarMeta(${index})">
 
-                    <p>
+                    Eliminar
 
-                        Objetivo:
-                        $${meta.monto.toFixed(2)}
-
-                    </p>
-
-                    <button
-                        class="btn btn-danger btn-sm"
-                        onclick="eliminarMeta(${index})">
-
-                        Eliminar
-
-                    </button>
-
-                </div>
+                </button>
 
             </div>
+
+        </div>
 
         `;
 
@@ -354,17 +459,23 @@ function renderizarMetas(){
 
 }
 
-/* ELIMINAR */
+/* ==========================
+   ELIMINAR META
+========================== */
 
 function eliminarMeta(index){
 
     metas.splice(index,1);
 
+    guardarDatos();
+
     renderizarMetas();
 
 }
 
-/* SECCIONES */
+/* ==========================
+   SECCIONES
+========================== */
 
 const inicioSection =
 document.getElementById("inicio-section");
@@ -378,7 +489,9 @@ document.getElementById("metas-section");
 const configSection =
 document.getElementById("config-section");
 
-/* BOTONES */
+/* ==========================
+   NAVEGACIÓN
+========================== */
 
 document
 .getElementById("btnInicio")
@@ -420,16 +533,11 @@ document
 
 });
 
-/* MOSTRAR */
-
 function mostrarSeccion(seccion){
 
     inicioSection.classList.add("d-none");
-
     movimientosSection.classList.add("d-none");
-
     metasSection.classList.add("d-none");
-
     configSection.classList.add("d-none");
 
     document
@@ -443,9 +551,7 @@ function mostrarSeccion(seccion){
     if(seccion === "inicio"){
 
         inicioSection.classList.remove("d-none");
-
-        document
-        .getElementById("btnInicio")
+        document.getElementById("btnInicio")
         .classList.add("active");
 
     }
@@ -453,9 +559,7 @@ function mostrarSeccion(seccion){
     if(seccion === "movimientos"){
 
         movimientosSection.classList.remove("d-none");
-
-        document
-        .getElementById("btnMovimientos")
+        document.getElementById("btnMovimientos")
         .classList.add("active");
 
     }
@@ -463,9 +567,7 @@ function mostrarSeccion(seccion){
     if(seccion === "metas"){
 
         metasSection.classList.remove("d-none");
-
-        document
-        .getElementById("btnMetas")
+        document.getElementById("btnMetas")
         .classList.add("active");
 
     }
@@ -473,26 +575,33 @@ function mostrarSeccion(seccion){
     if(seccion === "config"){
 
         configSection.classList.remove("d-none");
-
-        document
-        .getElementById("btnConfig")
+        document.getElementById("btnConfig")
         .classList.add("active");
 
     }
 
 }
 
-/* CERRAR SESIÓN */
+/* ==========================
+   CERRAR SESIÓN
+========================== */
 
 document
 .getElementById("cerrarSesion")
 .addEventListener("click", function(){
 
+    localStorage.removeItem(
+        "usuarioActivo"
+    );
+
     window.location.href =
     "login.html";
 
 });
-/* SIDEBAR TOGGLE */
+
+/* ==========================
+   SIDEBAR
+========================== */
 
 const toggleSidebar =
 document.getElementById("toggleSidebar");
@@ -505,3 +614,9 @@ toggleSidebar.addEventListener("click", function(){
     sidebar.classList.toggle("closed");
 
 });
+
+/* ==========================
+   INICIO
+========================== */
+
+cargarDatos();
