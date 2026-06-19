@@ -486,46 +486,86 @@ body {
   box-shadow: var(--shadow-sm);
   transition: transform var(--transition);
   border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
 }
 
 .meta-card:hover {
   transform: translateY(-3px);
 }
 
+.meta-card.meta-completada {
+  border-color: #22c55e;
+  background: linear-gradient(135deg, var(--surface), rgba(34,197,94,.05));
+}
+
+.meta-badge-completada {
+  font-size: .75rem;
+  font-weight: 700;
+  color: #16a34a;
+  background: rgba(34,197,94,.12);
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+.meta-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.meta-texto {
+  flex: 1;
+  min-width: 0;
+}
+
 .meta-card h5 {
   color: var(--text-main);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 .meta-card p {
   color: var(--text-muted);
   font-size: .88rem;
-  margin-bottom: 12px;
+  margin-bottom: 4px;
 }
 
 .meta-fecha {
   font-size: .78rem;
   color: var(--text-muted);
-  margin-bottom: 14px;
 }
 
-.progress {
-  height: 8px;
-  border-radius: 10px;
-  background: var(--bg);
-  margin-bottom: 8px;
+/* DONA */
+.meta-dona-wrap {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
 }
 
-.progress-bar {
-  border-radius: 10px;
+.dona-pct {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .75rem;
+  font-weight: 700;
+  color: var(--text-main);
+  pointer-events: none;
 }
 
 .meta-info-row {
   display: flex;
   justify-content: space-between;
-  font-size: .8rem;
+  font-size: .82rem;
   color: var(--text-muted);
-  margin-bottom: 14px;
+  margin-bottom: 4px;
 }
 
 /* ================================

@@ -563,10 +563,17 @@ document.getElementById("formMeta").addEventListener("submit", function(e) {
    RENDER METAS
 ========================== */
 
+// Mapa para destruir charts de donas al re-renderizar
+const chartsMetas = {};
+
 function renderizarMetas() {
   if (!contenedorMetas) return;
 
   const emptyEl = document.getElementById("emptyMetas");
+
+  // Destruir charts anteriores
+  Object.values(chartsMetas).forEach(c => c.destroy());
+  Object.keys(chartsMetas).forEach(k => delete chartsMetas[k]);
 
   if (metas.length === 0) {
     contenedorMetas.innerHTML = "";
@@ -578,43 +585,84 @@ function renderizarMetas() {
   contenedorMetas.innerHTML = "";
 
   metas.forEach((meta, index) => {
-    const pct     = Math.min(100, Math.round((meta.ahorrado / meta.monto) * 100));
-    const faltaNum = Math.max(0, meta.monto - meta.ahorrado);
+    const pct      = Math.min(100, Math.round(((meta.ahorrado || 0) / meta.monto) * 100));
+    const faltaNum = Math.max(0, meta.monto - (meta.ahorrado || 0));
+    const completada = pct >= 100;
 
-    contenedorMetas.innerHTML += `
-      <div class="col-lg-4 col-md-6 fade-in" style="--delay:${index * .05}s">
-        <div class="meta-card">
-          <h5>${meta.nombre}</h5>
-          <p>Objetivo: <strong>$${meta.monto.toFixed(2)}</strong></p>
-          ${meta.fecha ? `<p class="meta-fecha">📅 Fecha límite: ${meta.fecha}</p>` : ""}
-          <div class="progress mb-1">
-            <div class="progress-bar bg-success" style="width:${pct}%"></div>
+    // Construir columna
+    const col = document.createElement("div");
+    col.className = "col-lg-4 col-md-6 fade-in";
+    col.style.setProperty("--delay", `${index * 0.06}s`);
+
+    col.innerHTML = `
+      <div class="meta-card ${completada ? "meta-completada" : ""}">
+        ${completada ? `<div class="meta-badge-completada">🎉 ¡Completada!</div>` : ""}
+        <div class="meta-top">
+          <div class="meta-texto">
+            <h5>${meta.nombre}</h5>
+            <p>Objetivo: <strong>$${meta.monto.toFixed(2)}</strong></p>
+            ${meta.fecha ? `<p class="meta-fecha">📅 ${meta.fecha}</p>` : ""}
           </div>
-          <div class="meta-info-row">
-            <span>Ahorrado: $${meta.ahorrado.toFixed(2)}</span>
-            <span>${pct}%</span>
-          </div>
-          <p class="text-muted" style="font-size:.8rem">Falta: $${faltaNum.toFixed(2)}</p>
-          <div class="d-flex gap-2 mt-3">
-            <input
-              type="number"
-              class="form-control form-control-sm"
-              placeholder="Abonar $"
-              id="abonoMeta${index}"
-              min="0.01" step="0.01">
-            <button
-              class="btn btn-sm btn-success"
-              onclick="abonarMeta(${index})">
-              +
-            </button>
-            <button
-              class="btn btn-sm btn-outline-danger"
-              onclick="eliminarMeta(${index})">
-              <i class="bi bi-trash3"></i>
-            </button>
+          <div class="meta-dona-wrap">
+            <canvas id="donaMeta${index}" width="80" height="80"></canvas>
+            <span class="dona-pct">${pct}%</span>
           </div>
         </div>
+
+        <div class="meta-info-row mt-2">
+          <span>Ahorrado: <strong>$${(meta.ahorrado || 0).toFixed(2)}</strong></span>
+          <span class="text-muted">Falta: $${faltaNum.toFixed(2)}</span>
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+          <input
+            type="number"
+            class="form-control form-control-sm"
+            placeholder="Abonar $"
+            id="abonoMeta${index}"
+            min="0.01" step="0.01"
+            ${completada ? "disabled" : ""}>
+          <button
+            class="btn btn-sm btn-success"
+            onclick="abonarMeta(${index})"
+            ${completada ? "disabled" : ""}>
+            <i class="bi bi-plus-lg"></i>
+          </button>
+          <button
+            class="btn btn-sm btn-outline-danger"
+            onclick="eliminarMeta(${index})">
+            <i class="bi bi-trash3"></i>
+          </button>
+        </div>
       </div>`;
+
+    contenedorMetas.appendChild(col);
+
+    // Dibujar dona DESPUÉS de insertar el nodo al DOM
+    const canvas = col.querySelector(`#donaMeta${index}`);
+    if (canvas) {
+      const c = coloresGrafica();
+      chartsMetas[index] = new Chart(canvas, {
+        type: "doughnut",
+        data: {
+          datasets: [{
+            data: [meta.ahorrado || 0, faltaNum],
+            backgroundColor: [
+              completada ? "#22c55e" : "#2563eb",
+              modoOscuro ? "#334155" : "#e2e8f0"
+            ],
+            borderWidth: 0,
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          cutout: "72%",
+          responsive: false,
+          plugins: { legend: { display: false }, tooltip: { enabled: false } },
+          animation: { duration: 600 }
+        }
+      });
+    }
   });
 }
 
