@@ -87,21 +87,27 @@ let movimientos = [];
 let metas       = [];
 
 /* ==========================
-   LOCAL STORAGE
+   LOCAL STORAGE (por usuario)
+   Cada dato se guarda bajo
+   "nombreUsuario:clave" para
+   que cada perfil tenga sus
+   propios datos aislados.
 ========================== */
 
+function clave(k) { return usuarioActivo + ":" + k; }
+
 function guardarDatos() {
-  localStorage.setItem("ingresos",    JSON.stringify(ingresos));
-  localStorage.setItem("gastos",      JSON.stringify(gastos));
-  localStorage.setItem("movimientos", JSON.stringify(movimientos));
-  localStorage.setItem("metas",       JSON.stringify(metas));
+  localStorage.setItem(clave("ingresos"),    JSON.stringify(ingresos));
+  localStorage.setItem(clave("gastos"),      JSON.stringify(gastos));
+  localStorage.setItem(clave("movimientos"), JSON.stringify(movimientos));
+  localStorage.setItem(clave("metas"),       JSON.stringify(metas));
 }
 
 function cargarDatos() {
-  ingresos    = JSON.parse(localStorage.getItem("ingresos"))    || [];
-  gastos      = JSON.parse(localStorage.getItem("gastos"))      || [];
-  movimientos = JSON.parse(localStorage.getItem("movimientos")) || [];
-  metas       = JSON.parse(localStorage.getItem("metas"))       || [];
+  ingresos    = JSON.parse(localStorage.getItem(clave("ingresos")))    || [];
+  gastos      = JSON.parse(localStorage.getItem(clave("gastos")))      || [];
+  movimientos = JSON.parse(localStorage.getItem(clave("movimientos"))) || [];
+  metas       = JSON.parse(localStorage.getItem(clave("metas")))       || [];
 
   actualizarResumen();
   renderizarUltimosMovimientos();
@@ -709,9 +715,12 @@ function eliminarMeta(index) {
 document.getElementById("btnGuardarNombre")?.addEventListener("click", () => {
   const nombre = document.getElementById("inputNombreUsuario")?.value.trim();
   if (!nombre) return;
+  // Guardar datos actuales bajo el nombre viejo antes de cambiar
+  guardarDatos();
   localStorage.setItem("usuarioActivo", nombre);
-  if (saludoEl) saludoEl.textContent = `Hola ${nombre} 👋`;
-  mostrarToast("✅ Nombre actualizado");
+  // Actualizar la variable global y recargar datos del nuevo nombre
+  // (permite "cambiar" de perfil desde configuración)
+  window.location.reload();
 });
 
 document.getElementById("btnBorrarTodo")?.addEventListener("click", () => {
