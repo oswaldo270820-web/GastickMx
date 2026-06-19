@@ -1,525 +1,378 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
-    <title>Dashboard | Gastick</title>
-
-    <!-- BOOTSTRAP -->
-
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-        rel="stylesheet">
-
-    <!-- ICONOS -->
-
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    <!-- CSS -->
-
-    <link rel="stylesheet" href="dashboard.css">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Gastick</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="dashboard.css">
 </head>
-
 <body>
+
+<!-- TOAST -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:9999">
+  <div id="toastMsg" class="toast align-items-center border-0" role="alert">
+    <div class="d-flex">
+      <div class="toast-body" id="toastTexto"></div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMAR ELIMINAR -->
+<div class="modal fade" id="modalEliminar" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0">
+      <div class="modal-body text-center p-4">
+        <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size:2.5rem"></i>
+        <h5 class="mt-3 mb-1">¿Eliminar este movimiento?</h5>
+        <p class="text-muted small">Esta acción no se puede deshacer.</p>
+        <div class="d-flex gap-2 justify-content-center mt-3">
+          <button class="btn btn-light px-4" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn btn-danger px-4" id="btnConfirmarEliminar">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CERRAR SESIÓN -->
+<div class="modal fade" id="modalSesion" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0">
+      <div class="modal-body text-center p-4">
+        <i class="bi bi-box-arrow-right text-secondary" style="font-size:2.5rem"></i>
+        <h5 class="mt-3 mb-1">¿Cerrar sesión?</h5>
+        <p class="text-muted small">Volverás a la pantalla de inicio.</p>
+        <div class="d-flex gap-2 justify-content-center mt-3">
+          <button class="btn btn-light px-4" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn btn-dark px-4" id="btnConfirmarSesion">Sí, salir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="dashboard-container">
 
-    <!-- SIDEBAR -->
+  <!-- SIDEBAR -->
+  <aside class="sidebar closed" id="sidebar">
+    <div>
+      <div class="sidebar-brand">
+        <span class="logo-icon">G</span>
+        <h2 class="logo">Gastick</h2>
+      </div>
+      <nav class="menu">
+        <a href="#" id="btnInicio" class="menu-link active">
+          <i class="bi bi-grid-1x2-fill"></i><span>Inicio</span>
+        </a>
+        <a href="#" id="btnMovimientos" class="menu-link">
+          <i class="bi bi-cash-stack"></i><span>Movimientos</span>
+        </a>
+        <a href="#" id="btnMetas" class="menu-link">
+          <i class="bi bi-bullseye"></i><span>Metas</span>
+        </a>
+        <a href="#" id="btnConfig" class="menu-link">
+          <i class="bi bi-gear-fill"></i><span>Configuración</span>
+        </a>
+      </nav>
+    </div>
+    <div class="sidebar-footer">
+      <button id="cerrarSesion" class="btn-cerrar">
+        <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+      </button>
+    </div>
+  </aside>
 
-    <aside class="sidebar closed">
+  <!-- OVERLAY MÓVIL -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button id="toggleSidebar" class="toggle-btn">
+          <i class="bi bi-list"></i>
+        </button>
         <div>
-
-            <h2 class="logo">
-                Gastick
-            </h2>
-
-            <nav class="menu">
-
-                <a
-                    href="#"
-                    id="btnInicio"
-                    class="menu-link active">
-
-                    <i class="bi bi-grid-1x2-fill"></i>
-
-                    <span>Inicio</span>
-
-                </a>
-
-                <a
-                    href="#"
-                    id="btnMovimientos"
-                    class="menu-link">
-
-                    <i class="bi bi-cash-stack"></i>
-
-                    <span>Movimientos</span>
-
-                </a>
-
-                <a
-                    href="#"
-                    id="btnMetas"
-                    class="menu-link">
-
-                    <i class="bi bi-bullseye"></i>
-
-                    <span>Metas</span>
-
-                </a>
-
-                <a
-                    href="#"
-                    id="btnConfig"
-                    class="menu-link">
-
-                    <i class="bi bi-gear-fill"></i>
-
-                    <span>Configuración</span>
-
-                </a>
-
-            </nav>
-
+          <h3 id="saludoUsuario">Hola 👋</h3>
+          <p>Bienvenido nuevamente a Gastick</p>
         </div>
-
-        <div class="sidebar-footer">
-
-            <button
-                id="cerrarSesion"
-                class="btn btn-light w-100">
-
-                <i class="bi bi-box-arrow-right"></i>
-
-                Cerrar sesión
-
-            </button>
-
+      </div>
+      <div class="topbar-right">
+        <div class="fecha">
+          <i class="bi bi-calendar-event"></i>
+          <span id="fechaActual"></span>
         </div>
-
-    </aside>
+        <button class="toggle-dark" id="toggleDark" title="Modo oscuro">
+          <i class="bi bi-moon-fill"></i>
+        </button>
+      </div>
+    </header>
 
     <!-- CONTENIDO -->
+    <div class="contenido">
 
-    <main class="main-content">
+      <!-- INICIO -->
+      <section id="inicio-section">
 
-        <!-- TOPBAR -->
-
-        <header class="topbar">
-
-            <div class="topbar-left">
-
-                <button
-                    id="toggleSidebar"
-                    class="toggle-btn">
-
-                    <i class="bi bi-list"></i>
-
-                </button>
-
-                <div>
-
-                    <h3 id="saludoUsuario">
-                        Hola
-                    </h3>
-
-                    <p>
-                        Bienvenido nuevamente a Gastick
-                    </p>
-
-                </div>
-
+        <!-- CARDS -->
+        <div class="row g-4 mb-4">
+          <div class="col-md-6 col-lg-4">
+            <div class="resumen-card saldo-card fade-in" style="--delay:.05s">
+              <div>
+                <p>Saldo actual</p>
+                <h2 id="saldo">$0.00</h2>
+              </div>
+              <i class="bi bi-wallet2"></i>
             </div>
-
-            <div class="fecha">
-
-                <i class="bi bi-calendar-event"></i>
-
-                <span id="fechaActual"></span>
-
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="resumen-card ingreso-card fade-in" style="--delay:.1s">
+              <div>
+                <p>Total ingresos</p>
+                <h2 id="ingresos">$0.00</h2>
+              </div>
+              <i class="bi bi-arrow-up-circle-fill"></i>
             </div>
-
-        </header>
-
-        <!-- CONTENIDO -->
-
-        <div class="contenido p-4">
-
-            <!-- INICIO -->
-
-            <section id="inicio-section">
-
-                <!-- TARJETAS -->
-
-                <div class="row g-4 mb-4">
-
-                    <div class="col-lg-4">
-
-                        <div class="resumen-card saldo-card">
-
-                            <div>
-
-                                <p>Saldo actual</p>
-
-                                <h2 id="saldo">
-                                    $0.00
-                                </h2>
-
-                            </div>
-
-                            <i class="bi bi-wallet2"></i>
-
-                        </div>
-
-                    </div>
-
-                    <div class="col-lg-4">
-
-                        <div class="resumen-card ingreso-card">
-
-                            <div>
-
-                                <p>Total ingresos</p>
-
-                                <h2 id="ingresos">
-                                    $0.00
-                                </h2>
-
-                            </div>
-
-                            <i class="bi bi-arrow-up-circle-fill"></i>
-
-                        </div>
-
-                    </div>
-
-                    <div class="col-lg-4">
-
-                        <div class="resumen-card gasto-card">
-
-                            <div>
-
-                                <p>Total gastos</p>
-
-                                <h2 id="gastos">
-                                    $0.00
-                                </h2>
-
-                            </div>
-
-                            <i class="bi bi-arrow-down-circle-fill"></i>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- FORMULARIOS -->
-
-                <div class="row g-4 mb-4">
-
-                    <!-- INGRESOS -->
-
-                    <div class="col-lg-6">
-
-                        <div class="custom-card">
-
-                            <h5>
-                                Registrar ingreso
-                            </h5>
-
-                            <form id="formIngreso">
-
-                                <div class="mb-3">
-
-                                    <label>
-                                        Concepto
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        id="conceptoIngreso"
-                                        class="form-control"
-                                        placeholder="Ej. Nómina">
-
-                                </div>
-
-                                <div class="mb-3">
-
-                                    <label>
-                                        Monto
-                                    </label>
-
-                                    <input
-                                        type="number"
-                                        id="montoIngreso"
-                                        class="form-control"
-                                        placeholder="$0.00">
-
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    class="btn btn-success w-100">
-
-                                    Guardar ingreso
-
-                                </button>
-
-                            </form>
-
-                        </div>
-
-                    </div>
-
-                    <!-- GASTOS -->
-
-                    <div class="col-lg-6">
-
-                        <div class="custom-card">
-
-                            <h5>
-                                Registrar gasto
-                            </h5>
-
-                            <form id="formGasto">
-
-                                <div class="mb-3">
-
-                                    <label>
-                                        Concepto
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        id="conceptoGasto"
-                                        class="form-control"
-                                        placeholder="Ej. Comida">
-
-                                </div>
-
-                                <div class="mb-3">
-
-                                    <label>
-                                        Monto
-                                    </label>
-
-                                    <input
-                                        type="number"
-                                        id="montoGasto"
-                                        class="form-control"
-                                        placeholder="$0.00">
-
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    class="btn btn-danger w-100">
-
-                                    Guardar gasto
-
-                                </button>
-
-                            </form>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- TABLA -->
-
-                <div class="custom-card">
-
-                    <h5 class="mb-4">
-                        Últimos movimientos
-                    </h5>
-
-                    <div class="table-responsive">
-
-                        <table class="table align-middle">
-
-                            <thead>
-
-                                <tr>
-
-                                    <th>Concepto</th>
-
-                                    <th>Monto</th>
-
-                                    <th>Tipo</th>
-
-                                </tr>
-
-                            </thead>
-
-                            <tbody id="tablaMovimientos">
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-            <!-- MOVIMIENTOS -->
-
-            <section
-                id="movimientos-section"
-                class="d-none">
-
-                <div class="custom-card">
-
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-
-                        <h4>
-                            Historial de movimientos
-                        </h4>
-
-                        <input
-                            type="date"
-                            id="filtroFecha"
-                            class="form-control w-auto">
-
-                    </div>
-
-                    <div class="table-responsive">
-
-                        <table class="table align-middle">
-
-                            <thead>
-
-                                <tr>
-
-                                    <th>Fecha</th>
-
-                                    <th>Concepto</th>
-
-                                    <th>Monto</th>
-
-                                    <th>Tipo</th>
-
-                                </tr>
-
-                            </thead>
-
-                            <tbody id="tablaCompleta">
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-            <!-- METAS -->
-
-            <section
-                id="metas-section"
-                class="d-none">
-
-                <div class="custom-card mb-4">
-
-                    <h4 class="mb-4">
-                        Registrar meta financiera
-                    </h4>
-
-                    <form id="formMeta">
-
-                        <div class="row g-3">
-
-                            <div class="col-md-6">
-
-                                <input
-                                    type="text"
-                                    id="nombreMeta"
-                                    class="form-control"
-                                    placeholder="Nombre de meta">
-
-                            </div>
-
-                            <div class="col-md-4">
-
-                                <input
-                                    type="number"
-                                    id="montoMeta"
-                                    class="form-control"
-                                    placeholder="Monto objetivo">
-
-                            </div>
-
-                            <div class="col-md-2">
-
-                                <button
-                                    class="btn btn-primary w-100"
-                                    type="submit">
-
-                                    Guardar
-
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </form>
-
-                </div>
-
-                <div
-                    id="contenedorMetas"
-                    class="row g-4">
-
-                </div>
-
-            </section>
-
-            <!-- CONFIG -->
-
-            <section
-                id="config-section"
-                class="d-none">
-
-                <div class="custom-card">
-
-                    <h4>
-                        Configuración
-                    </h4>
-
-                    <p class="text-muted">
-                        Próximamente.
-                    </p>
-
-                </div>
-
-            </section>
-
+          </div>
+          <div class="col-md-12 col-lg-4">
+            <div class="resumen-card gasto-card fade-in" style="--delay:.15s">
+              <div>
+                <p>Total gastos</p>
+                <h2 id="gastos">$0.00</h2>
+              </div>
+              <i class="bi bi-arrow-down-circle-fill"></i>
+            </div>
+          </div>
         </div>
 
-    </main>
+        <!-- GRÁFICA DASHBOARD -->
+        <div class="custom-card mb-4 fade-in" style="--delay:.2s">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5>Resumen financiero</h5>
+            <div class="btn-group btn-group-sm" id="filtroGrafica">
+              <button class="btn btn-outline-secondary active" data-tipo="semana">Semana</button>
+              <button class="btn btn-outline-secondary" data-tipo="mes">Mes</button>
+            </div>
+          </div>
+          <canvas id="graficaDashboard" height="100"></canvas>
+        </div>
 
+        <!-- FORMULARIOS -->
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6 fade-in" style="--delay:.25s">
+            <div class="custom-card">
+              <h5><i class="bi bi-plus-circle-fill text-success me-2"></i>Registrar ingreso</h5>
+              <form id="formIngreso">
+                <div class="mb-3">
+                  <label class="form-label">Concepto</label>
+                  <input type="text" id="conceptoIngreso" class="form-control" placeholder="Ej: Sueldo, freelance…">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Monto</label>
+                  <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="number" id="montoIngreso" class="form-control" placeholder="0.00" min="0.01" step="0.01">
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Categoría</label>
+                  <select id="categoriaIngreso" class="form-select">
+                    <option value="Trabajo">💼 Trabajo</option>
+                    <option value="Freelance">💻 Freelance</option>
+                    <option value="Inversión">📈 Inversión</option>
+                    <option value="Regalo">🎁 Regalo</option>
+                    <option value="Otro">📌 Otro</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-success w-100">
+                  <i class="bi bi-check-lg me-1"></i> Guardar ingreso
+                </button>
+              </form>
+            </div>
+          </div>
+          <div class="col-lg-6 fade-in" style="--delay:.3s">
+            <div class="custom-card">
+              <h5><i class="bi bi-dash-circle-fill text-danger me-2"></i>Registrar gasto</h5>
+              <form id="formGasto">
+                <div class="mb-3">
+                  <label class="form-label">Concepto</label>
+                  <input type="text" id="conceptoGasto" class="form-control" placeholder="Ej: Renta, comida…">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Monto</label>
+                  <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="number" id="montoGasto" class="form-control" placeholder="0.00" min="0.01" step="0.01">
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Categoría</label>
+                  <select id="categoriaGasto" class="form-select">
+                    <option value="Comida">🍔 Comida</option>
+                    <option value="Transporte">🚗 Transporte</option>
+                    <option value="Renta">🏠 Renta</option>
+                    <option value="Entretenimiento">🎬 Entretenimiento</option>
+                    <option value="Salud">💊 Salud</option>
+                    <option value="Ropa">👗 Ropa</option>
+                    <option value="Otro">📌 Otro</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-danger w-100">
+                  <i class="bi bi-check-lg me-1"></i> Guardar gasto
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- ÚLTIMOS MOVIMIENTOS -->
+        <div class="custom-card fade-in" style="--delay:.35s">
+          <h5 class="mb-4">Últimos movimientos</h5>
+          <div id="emptyInicio" class="empty-state d-none">
+            <i class="bi bi-inbox"></i>
+            <p>Aún no hay movimientos.<br>Registra tu primer ingreso o gasto.</p>
+          </div>
+          <div class="table-responsive" id="wrapperTablaInicio">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Concepto</th>
+                  <th>Categoría</th>
+                  <th>Monto</th>
+                  <th>Tipo</th>
+                </tr>
+              </thead>
+              <tbody id="tablaMovimientos"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- MOVIMIENTOS -->
+      <section id="movimientos-section" class="d-none">
+        <div class="custom-card">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+            <h4>Historial de movimientos</h4>
+            <div class="d-flex gap-2 flex-wrap">
+              <select id="filtroTipo" class="form-select form-select-sm w-auto">
+                <option value="">Todos</option>
+                <option value="Ingreso">Solo ingresos</option>
+                <option value="Gasto">Solo gastos</option>
+              </select>
+              <input type="date" id="filtroFecha" class="form-control form-control-sm w-auto">
+              <button class="btn btn-sm btn-outline-secondary" id="btnLimpiarFiltros">
+                <i class="bi bi-x-lg"></i> Limpiar
+              </button>
+              <button class="btn btn-sm btn-outline-success" id="btnExportarCSV">
+                <i class="bi bi-download me-1"></i>CSV
+              </button>
+            </div>
+          </div>
+
+          <canvas id="graficaMovimientos" class="mb-4" height="80"></canvas>
+
+          <div id="emptyMovimientos" class="empty-state d-none">
+            <i class="bi bi-search"></i>
+            <p>Sin resultados para este filtro.</p>
+          </div>
+
+          <div class="table-responsive" id="wrapperTablaCompleta">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Concepto</th>
+                  <th>Categoría</th>
+                  <th>Monto</th>
+                  <th>Tipo</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="tablaCompleta"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- METAS -->
+      <section id="metas-section" class="d-none">
+        <div class="custom-card mb-4">
+          <h4>Nueva meta financiera</h4>
+          <form id="formMeta">
+            <div class="row g-3">
+              <div class="col-md-5">
+                <input type="text" id="nombreMeta" class="form-control" placeholder="Ej: Viaje a Japón">
+              </div>
+              <div class="col-md-3">
+                <div class="input-group">
+                  <span class="input-group-text">$</span>
+                  <input type="number" id="montoMeta" class="form-control" placeholder="Objetivo" min="1">
+                </div>
+              </div>
+              <div class="col-md-2">
+                <input type="date" id="fechaMeta" class="form-control" placeholder="Fecha límite">
+              </div>
+              <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Guardar</button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div id="emptyMetas" class="empty-state custom-card d-none">
+          <i class="bi bi-bullseye"></i>
+          <p>Sin metas aún.<br>Crea tu primera meta financiera.</p>
+        </div>
+        <div id="contenedorMetas" class="row g-4"></div>
+      </section>
+
+      <!-- CONFIG -->
+      <section id="config-section" class="d-none">
+        <div class="custom-card">
+          <h4>Configuración</h4>
+          <div class="row g-4 mt-1">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Nombre de usuario</label>
+              <div class="input-group">
+                <input type="text" id="inputNombreUsuario" class="form-control" placeholder="Tu nombre">
+                <button class="btn btn-outline-secondary" id="btnGuardarNombre">Guardar</button>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Apariencia</label>
+              <div class="d-flex gap-3">
+                <div class="theme-option" id="themeLight">
+                  <i class="bi bi-sun-fill"></i> Claro
+                </div>
+                <div class="theme-option active" id="themeDark">
+                  <i class="bi bi-moon-fill"></i> Oscuro
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+              <hr>
+              <label class="form-label fw-semibold text-danger">Zona de peligro</label>
+              <div>
+                <button class="btn btn-outline-danger btn-sm" id="btnBorrarTodo">
+                  <i class="bi bi-trash3 me-1"></i>Borrar todos los datos
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 <script src="dashboard.js"></script>
-
 </body>
-
 </html>
